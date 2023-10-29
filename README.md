@@ -3,9 +3,11 @@
 A multivariate polynomial module.
 
 This package provides a single class, `MultiPoly`, to handle multivariate polynomials of form
+
 $$
-    p(\vec{x}) = \sum_{0\leq n\leq\deg(p)}a_n(\vec{x}-\vec{c})^n
+    p(\vec{x}) = \sum_{0\leq n\leq\deg(p)}a_n(\vec{x}-\vec{c})^n = \sum_{n_0=0}^{\deg_0(p)}\cdots\sum_{n_{\dim(p)-1}=0}^{\deg_{\dim(p)-1}(p)}a_{n_0\cdots n_{\dim(p)-1}}(x_0-c_0)^{n_0}\cdots(x_{\dim(p)-1}-c_{\dim(p)-1})^{n_{\dim(p)-1}}
 $$
+
 where $n$ and $\deg(p)$ are multi-indices.
 This differs from the usual upper sum limit $|n|\leq\deg(p)$ where $n$ is a multi-index and $\deg(p)$ a natural number,
 because this way the degree in every variable can be controlled individually.

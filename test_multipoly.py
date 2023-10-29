@@ -8,6 +8,8 @@ if __name__ == '__main__':
     a = ((1, 2), (3, 4), (5, 6))
     p = MultiPoly(a)
     assert np.isclose(p(np.pi, np.e), 260.33849829919226241991897829427872868844018150211046741506505724) #https://www.wolframalpha.com/input?i=260.33849829919226241991897829427872868844018150211046741506505724&assumption=%22ClashPrefs%22+-%3E+%7B%22Math%22%7D
+    #vectorisation
+    assert np.allclose(p([[np.pi, np.e], [2, 3]]), [p(np.pi, np.e), p(2, 3)])
     
     
     
