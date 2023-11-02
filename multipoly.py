@@ -9,9 +9,19 @@ class MultiPoly:
     
     def __init__(self, a, c=None):
         """Creates a multivariate polynomial with the given coefficients
-        and given offsets ore zeros otherwise."""
+        and given offsets or zeros otherwise."""
         self.a = np.asarray(a) #coefficients
         self.c = np.asarray(c) if c is not None else np.zeros(self.dim) #offsets
+    
+    @staticmethod
+    def random(deg, offsets=True):
+        """Creates a Multipoly of the given degree
+        with normal distributed coefficients and offsets, if enabled."""
+        if offsets:
+            return MultiPoly(np.random.normal(size=np.add(deg, 1)),
+                             np.random.normal(size=len(deg)))
+        else:
+            return MultiPoly(np.random.normal(size=np.add(deg, 1)))
     
     @staticmethod
     def fit(X, y, deg, c=None):
@@ -19,8 +29,8 @@ class MultiPoly:
         for the given X and y values."""
         if c is None:
             c = np.zeros(len(deg))
-        X, shape = np.subtract(X, c), np.asarray(deg)+1
-        X_ = np.empty((len(X), np.prod(shape))) #monomials
+        X, shape = np.subtract(X, c), np.add(deg, 1)
+        X_ = np.empty((len(X), np.prod(shape))) #monomials, X_[ni] = X[n,:]^i
         for i in np.ndindex(*shape):
             X_[:, np.ravel_multi_index(i, shape)] = np.prod(np.power(X, i), axis=1)
         return MultiPoly(np.linalg.lstsq(X_, y, rcond=None)[0].reshape(shape), c)
@@ -52,6 +62,7 @@ class MultiPoly:
     
     
     #python stuff
+    #TODO: __format__
     def toString(self, symbols=None):
         """Returns a string representation with the given symbols als variables,
         or x0, x1, ... if none are provided."""
