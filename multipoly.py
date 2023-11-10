@@ -2,6 +2,18 @@ import numpy as np
 
 
 
+def polyvalnd(x, c):
+    return sum(ci * np.prod(np.power(x, i), axis=-1) for i, ci in np.ndenumerate(c))
+
+def polyfitnd(X, y, deg):
+    shape = np.add(deg, 1)
+    X_ = np.empty((len(X), np.prod(shape))) #monomials, X_[n,i] = X[n,:]^i
+    for i in np.ndindex(*shape):
+        X_[:, np.ravel_multi_index(i, shape)] = np.prod(np.power(X, i), axis=1)
+    return np.linalg.lstsq(X_, y, rcond=None)[0].reshape(shape)
+
+
+
 class MultiPoly:
     """A multivariate polynomial class of the form
     p(\vec{x}) = \sum_{0\leq n\leq\deg(p)}a_n(\vec{x}-\vec{c})^n
@@ -29,11 +41,7 @@ class MultiPoly:
         for the given X and y values."""
         if c is None:
             c = np.zeros(len(deg))
-        X, shape = np.subtract(X, c), np.add(deg, 1)
-        X_ = np.empty((len(X), np.prod(shape))) #monomials, X_[n,i] = X[n,:]^i
-        for i in np.ndindex(*shape):
-            X_[:, np.ravel_multi_index(i, shape)] = np.prod(np.power(X, i), axis=1)
-        return MultiPoly(np.linalg.lstsq(X_, y, rcond=None)[0].reshape(shape), c)
+        return MultiPoly(polyfitnd(np.subtract(X, c), y, deg), c)
     
     
     
@@ -49,7 +57,7 @@ class MultiPoly:
         return np.subtract(self.a.shape, 1)
     
     def __call__(self, *x):
-        return sum(ai * np.prod(np.power(x-self.c, i), axis=-1) for i, ai in np.ndenumerate(self.a))
+        return polyvalnd(x-self.c, self.a)
     
     
     
