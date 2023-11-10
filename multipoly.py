@@ -30,7 +30,7 @@ class MultiPoly:
         if c is None:
             c = np.zeros(len(deg))
         X, shape = np.subtract(X, c), np.add(deg, 1)
-        X_ = np.empty((len(X), np.prod(shape))) #monomials, X_[ni] = X[n,:]^i
+        X_ = np.empty((len(X), np.prod(shape))) #monomials, X_[n,i] = X[n,:]^i
         for i in np.ndindex(*shape):
             X_[:, np.ravel_multi_index(i, shape)] = np.prod(np.power(X, i), axis=1)
         return MultiPoly(np.linalg.lstsq(X_, y, rcond=None)[0].reshape(shape), c)
@@ -46,7 +46,7 @@ class MultiPoly:
     @property
     def deg(self):
         """Degree in every variable."""
-        return self.a.shape
+        return np.subtract(self.a.shape, 1)
     
     def __call__(self, *x):
         return sum(ai * np.prod(np.power(x-self.c, i), axis=-1) for i, ai in np.ndenumerate(self.a))
